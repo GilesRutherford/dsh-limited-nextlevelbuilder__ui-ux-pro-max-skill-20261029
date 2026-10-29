@@ -1,0 +1,37 @@
+name: Smoke test data
+
+on:
+  pull_request:
+    paths:
+      - 'src/ui-ux-pro-max/data/**'
+      - 'src/ui-ux-pro-max/scripts/**'
+      - 'cli/assets/data/**'
+      - 'cli/assets/scripts/**'
+      - 'scripts/validate-csv.py'
+      - 'scripts/smoke-stacks.sh'
+      - 'scripts/smoke-domains.sh'
+      - '.github/workflows/smoke-stacks.yml'
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.x'
+
+      - name: Validate CSV structure
+        run: python3 scripts/validate-csv.py
+
+      - name: Run domain smoke test
+        run: bash scripts/smoke-domains.sh
+
+      - name: Run stack smoke test
+        run: bash scripts/smoke-stacks.sh
